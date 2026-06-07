@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: simple-api
+  name: k8s-wordpress
   namespace: argocd
 spec:
   project: default
