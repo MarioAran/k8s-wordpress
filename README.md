@@ -380,5 +380,3 @@ MIT - Libre para aprender y reutilizar.
 ---
 
 Hecho con ☕, 🐳 y 🔄 por Mario
-
-[⬆ Volver arriba]
