@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: wordpress
-        image: wordpress:latest
+        image: wordpress:6.7.2-php8.3-apache
         ports:
         - containerPort: 80 
         env:
@@ -40,7 +40,18 @@ spec:
             value: "redis-service"
           - name: WP_REDIS_PORT
             value: "6379"
-
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
         volumeMounts:
         - name:  wordpress-storage
           mountPath:  /var/www/html
@@ -48,4 +59,3 @@ spec:
       - name: wordpress-storage
         persistentVolumeClaim:
           claimName: wordpress-pvc
-      

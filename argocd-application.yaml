@@ -13,7 +13,7 @@ spec:
       recurse: true 
   destination:
     server: https://kubernetes.default.svc
-    namespace: k8s-wordpress
+    namespace: wordpress-stack
   syncPolicy:
     automated:
       prune: true

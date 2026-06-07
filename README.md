@@ -1,4 +1,4 @@
-# 🚀 WordPress en Kubernetes
+# 🚀 WordPress en Kubernetes
 
 ## Migración del stack de WordPress desde Docker Compose a Kubernetes.
 
@@ -66,7 +66,7 @@ Este proyecto es la migración completa del stack de WordPress desde Docker Comp
 - | Almacenamiento | PersistentVolumeClaims |
 
 
-## ✅ Requisitos
+## ✅ Requisitos
 
 - Docker Desktop con Kubernetes habilitado
 - kubectl instalado
@@ -85,28 +85,31 @@ kubectl get nodes
 ```
 k8s-wordpress/
 │
-├── secrets.yaml
+├── argocd-application.yaml
+├── secrets-example.yaml         # Template de secretos (renombrar a secrets.yaml)
 │
-├── mysql/
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   └── pvc.yaml
+├── k8s/
+│   ├── mysql/
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   └── pvc.yaml
+│   │
+│   ├── wordpress/
+│   │   ├── namespace.yaml
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   └── pvc.yaml
+│   │
+│   ├── phpmyadmin/
+│   │   ├── deploy.yaml
+│   │   └── service.yaml
+│   │
+│   └── redis/
+│       ├── deploy.yaml
+│       ├── service.yaml
+│       └── pvc.yaml
 │
-├── wordpress/
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   └── pvc.yaml
-│
-├── phpmyadmin/
-│   ├── deployment.yaml
-│   └── service.yaml
-│
-├── redis/
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   └── pvc.yaml
-│
-└── grafana/                 [PENDIENTE]
+└── grafana/                     [PENDIENTE]
    ├── deployment.yaml
    └── service.yaml
 ```
@@ -114,44 +117,52 @@ k8s-wordpress/
 
 # 🚀 Instalación
 
-## 1. Aplicar el Secret
+## 1. Crear el Namespace
 
 ```bash
-kubectl apply -f secrets.yaml
+kubectl apply -f k8s/wordpress/namespace.yaml
 ```
 
-## 2. Aplicar los PersistentVolumeClaims
+## 2. Aplicar el Secret
 
 ```bash
-kubectl apply -f mysql/pvc.yaml
-kubectl apply -f wordpress/pvc.yaml
-kubectl apply -f redis/pvc.yaml
+cp secrets-example.yaml secrets.yaml
+# Editar secrets.yaml con tus valores reales (base64)
+kubectl apply -f secrets.yaml -n wordpress-stack
 ```
 
-## 3. Aplicar los Deployments
+## 3. Aplicar los PersistentVolumeClaims
 
 ```bash
-kubectl apply -f mysql/deployment.yaml
-kubectl apply -f wordpress/deployment.yaml
-kubectl apply -f phpmyadmin/deployment.yaml
-kubectl apply -f redis/deployment.yaml
+kubectl apply -f k8s/mysql/pvc.yaml -n wordpress-stack
+kubectl apply -f k8s/wordpress/pvc.yaml -n wordpress-stack
+kubectl apply -f k8s/redis/pvc.yaml -n wordpress-stack
 ```
 
-## 4. Aplicar los Services
+## 4. Aplicar los Deployments
 
 ```bash
-kubectl apply -f mysql/service.yaml
-kubectl apply -f wordpress/service.yaml
-kubectl apply -f phpmyadmin/service.yaml
-kubectl apply -f redis/service.yaml
+kubectl apply -f k8s/mysql/deployment.yaml -n wordpress-stack
+kubectl apply -f k8s/wordpress/deploy.yaml -n wordpress-stack
+kubectl apply -f k8s/phpmyadmin/deploy.yaml -n wordpress-stack
+kubectl apply -f k8s/redis/deploy.yaml -n wordpress-stack
 ```
 
-## 5. Verificar que todo está corriendo
+## 5. Aplicar los Services
 
 ```bash
-kubectl get pods
-kubectl get svc
-kubectl get pvc
+kubectl apply -f k8s/mysql/service.yaml -n wordpress-stack
+kubectl apply -f k8s/wordpress/service.yaml -n wordpress-stack
+kubectl apply -f k8s/phpmyadmin/service.yaml -n wordpress-stack
+kubectl apply -f k8s/redis/service.yaml -n wordpress-stack
+```
+
+## 6. Verificar que todo está corriendo
+
+```bash
+kubectl get pods -n wordpress-stack
+kubectl get svc -n wordpress-stack
+kubectl get pvc -n wordpress-stack
 ```
 
 Resultado esperado:
@@ -167,7 +178,7 @@ redis-deployment-xxxxxxxxxx-xxxxx        1/1     Running
 ```
 
 
-## 🌐 Servicios y puertos
+## 🌐 Servicios y puertos
 
 - | Servicio | Tipo | Puerto interno | Puerto externo |
 - |----------|------|----------------|----------------|
@@ -185,33 +196,29 @@ redis-deployment-xxxxxxxxxx-xxxxx        1/1     Running
 - | Grafana | (próximamente) |
 
 
-## 🔧 Comandos útiles
+## 🔧 Comandos útiles
 
 ```bash
-Ver todos los pods
-kubectl get pods
+# Ver todos los pods en el namespace
+kubectl get pods -n wordpress-stack
 
-Ver todos los servicios
-kubectl get svc
+# Ver todos los servicios
+kubectl get svc -n wordpress-stack
 
-Ver logs de un deployment
-kubectl logs -f deployment/wordpress-deployment
+# Ver logs de un deployment
+kubectl logs -f deployment/wordpress-deployment -n wordpress-stack
 
-Escalar WordPress a 5 réplicas
-kubectl scale deployment wordpress-deployment --replicas=5
+# Escalar WordPress a 5 réplicas
+kubectl scale deployment wordpress-deployment --replicas=5 -n wordpress-stack
 
-Acceder a un pod específico
-kubectl exec -it deployment/wordpress-deployment -- bash
+# Acceder a un pod específico
+kubectl exec -it deployment/wordpress-deployment -n wordpress-stack -- bash
 
-Ver uso de recursos
-kubectl top pods
+# Ver uso de recursos
+kubectl top pods -n wordpress-stack
 
-Eliminar todo el stack
-kubectl delete -f mysql/
-kubectl delete -f wordpress/
-kubectl delete -f phpmyadmin/
-kubectl delete -f redis/
-kubectl delete -f secrets.yaml
+# Eliminar todo el stack
+kubectl delete namespace wordpress-stack
 ```
 
 
