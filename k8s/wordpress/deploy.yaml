@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: wordpress-deployment
   namespace: wordpress-stack
-
 spec:
   replicas: 3
   selector: 
