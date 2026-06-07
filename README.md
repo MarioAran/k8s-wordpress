@@ -100,36 +100,32 @@ kubectl get nodes
 k8s-wordpress/
 │
 ├── argocd-application.yaml      # Configuración de ArgoCD
-├── kustomization.yaml            # Kustomize para GitOps
 ├── secrets-example.yaml          # Template de secretos
 ├── README.md
 │
-├── k8s/
-│   ├── mysql/
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   │   └── pvc.yaml
-│   │
-│   ├── wordpress/
-│   │   ├── namespace.yaml
-│   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   │   ├── ingress.yaml
-│   │   └── pvc.yaml
-│   │
-│   ├── phpmyadmin/
-│   │   ├── deploy.yaml
-│   │   ├── service.yaml
-│   │   └── ingress.yaml
-│   │
-│   └── redis/
-│       ├── deploy.yaml
-│       ├── service.yaml
-│       └── pvc.yaml
-│
-└── grafana/                     [PENDIENTE]
-    ├── deployment.yaml
-    └── service.yaml
+└── k8s/
+    ├── mysql/
+    │   ├── deployment.yaml
+    │   ├── service.yaml
+    │   └── pvc.yaml
+    │
+    ├── wordpress/
+    │   ├── namespace.yaml
+    │   ├── deployment.yaml
+    │   ├── service.yaml
+    │   ├── ingress.yaml
+    │   └── pvc.yaml
+    │
+    ├── phpmyadmin/
+    │   ├── deploy.yaml
+    │   ├── service.yaml
+    │   └── ingress.yaml
+    │
+    └── redis/
+        └── pvc.yaml
+        ├── service.yaml
+        ├── deploy.yaml
+
 ```
 
 
