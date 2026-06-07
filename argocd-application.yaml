@@ -8,10 +8,12 @@ spec:
   source:
     repoURL: https://github.com/MarioAran/k8s-wordpress
     targetRevision: main
-    path: k8s
+    path: .  # Raíz del repositorio
+    directory:
+      recurse: true 
   destination:
     server: https://kubernetes.default.svc
-    namespace: simple-api
+    namespace: k8s-wordpress
   syncPolicy:
     automated:
       prune: true
