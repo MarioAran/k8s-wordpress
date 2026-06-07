@@ -5,11 +5,10 @@ metadata:
   name: wordpress-service
   namespace: wordpress-stack
 spec: 
-  type: NodePort
+  type: ClusterIP  # ← ClusterIP, no NodePort
   selector: 
     app: wordpress
   ports:
   - port: 80
-    targetPort: 80 
-    nodePort: 30082
+    targetPort: 80
     protocol: TCP
